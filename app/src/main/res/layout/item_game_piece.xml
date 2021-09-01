@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.davisdabols.shotsandbeer.repository.models.GamePiece" />
+
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/game_piece"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        app:cardBackgroundColor="@color/white"
+        app:cardElevation="4dp"
+        app:cardCornerRadius="8dp"
+        tools:cardBackgroundColor="@color/piece_idle">
+
+        <TextView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:text="@{item.valueString}"
+            android:gravity="center"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-medium"
+            tools:text="25" />
+
+    </androidx.cardview.widget.CardView>
+
+</layout>
