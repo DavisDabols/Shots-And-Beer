@@ -9,6 +9,9 @@ import com.davisdabols.shotsandbeer.repository.models.GamePiece
 import com.davisdabols.shotsandbeer.repository.models.HighScoreModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collect
+import timber.log.Timber
+import timber.log.Timber.d
 import java.util.*
 import javax.inject.Inject
 
@@ -52,40 +55,40 @@ class GameViewModel : ViewModel() {
     fun startGame() {
         _onGameOver.tryEmit(null)
 
-        val pieces = mutableListOf<GamePiece>()
-        (1..POSSIBLE_NUMBERS).forEach { number ->
+        var pieces = mutableListOf<GamePiece>()
+        (0..POSSIBLE_NUMBERS).forEach { number ->
             pieces.add(GamePiece(number, number))
         }
         pieces.shuffle()
         pieces.shuffle()
 
-        pieces.drop(6)
+        pieces = pieces.drop(6).toMutableList()
 
         _gamePieces.tryEmit(pieces)
         timer.start()
+        _guesses.tryEmit(emptyList())
+        Timber.d("${pieces}")
     }
 
     fun checkInput(inputValue: String) {
         val guesses = _guesses.replayCache[0].toMutableList()
         val pieces = _gamePieces.replayCache[0].toMutableList()
 
-        (1..PIECE_COUNT).forEach { index ->
-            (1..PIECE_COUNT).forEach { indexTwo ->
-                val inputDigit = inputValue[indexTwo].digitToInt()
-                guesses.add(GamePiece(guesses.last().ID + 1, inputDigit))
+        var piecesFoundThisAttempt = 0
 
-                var piecesFoundThisAttempt = 0
+        (0 until PIECE_COUNT).forEach { indexTwo ->
+            val inputDigit = inputValue[indexTwo].digitToInt()
+            guesses.add(GamePiece(guesses.lastOrNull()?.ID?.plus(1) ?: 0, inputDigit))
 
-                if(pieces[index].value == inputDigit) {
-                    guesses[indexTwo].isFound = true
-                    piecesFoundThisAttempt += 1
-                } else if(pieces.any { it.value == inputDigit }) {
-                    guesses[indexTwo].wrongLocation = true
-                }
+            if(pieces[indexTwo].value == inputDigit) {
+                guesses.last().isFound = true
+                piecesFoundThisAttempt += 1
+            } else if(pieces.any { it.value == inputDigit }) {
+                guesses.last().wrongLocation = true
+            }
 
-                if(piecesFoundThisAttempt == 4) {
-                    onGameOver()
-                }
+            if(piecesFoundThisAttempt == 4) {
+                onGameOver()
             }
         }
 

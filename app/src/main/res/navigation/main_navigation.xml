@@ -9,9 +9,9 @@
         android:id="@+id/navigation_menu"
         android:name="com.davisdabols.shotsandbeer.ui.menu.MenuFragment" />
 
-<!--    <fragment-->
-<!--        android:id="@+id/navigation_game"-->
-<!--        android:name="com.davisdabols.shotsandbeer.ui.game.GameFragment" />-->
+    <fragment
+        android:id="@+id/navigation_game"
+        android:name="com.davisdabols.shotsandbeer.ui.game.GameFragment" />
 
     <fragment
         android:id="@+id/navigation_high_scores"

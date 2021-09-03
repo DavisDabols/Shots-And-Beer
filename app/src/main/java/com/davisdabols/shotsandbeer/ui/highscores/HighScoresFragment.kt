@@ -10,6 +10,7 @@ import com.davisdabols.shotsandbeer.R
 import com.davisdabols.shotsandbeer.common.launchMain
 import com.davisdabols.shotsandbeer.common.openFragment
 import com.davisdabols.shotsandbeer.databinding.FragmentHighscoresBinding
+import com.davisdabols.shotsandbeer.ui.GameViewModel
 //import com.davisdabols.shotsandbeer.ui.GameViewModel
 import kotlinx.coroutines.flow.collect
 
@@ -17,7 +18,7 @@ class HighScoresFragment : Fragment() {
 
     private lateinit var binding: FragmentHighscoresBinding
 
-//    private val viewModel by activityViewModels<GameViewModel>()
+    private val viewModel by activityViewModels<GameViewModel>()
     private val adapter by lazy { HighScoreAdapter() }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -34,15 +35,15 @@ class HighScoresFragment : Fragment() {
             openFragment(R.id.navigation_menu)
         }
 
-//        launchMain {
-//            viewModel.highScores.collect { highScores ->
-//                binding.emptyHighScore.visibility = if (highScores.isEmpty()) {
-//                    View.VISIBLE
-//                } else {
-//                    View.GONE
-//                }
-//                adapter.highScores = highScores
-//            }
-//        }
+        launchMain {
+            viewModel.highScores.collect { highScores ->
+                binding.emptyHighScore.visibility = if (highScores.isEmpty()) {
+                    View.VISIBLE
+                } else {
+                    View.GONE
+                }
+                adapter.highScores = highScores
+            }
+        }
     }
 }
