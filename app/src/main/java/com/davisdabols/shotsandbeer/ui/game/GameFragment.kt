@@ -38,6 +38,7 @@ class GameFragment : Fragment() {
 
         binding.submitInput.setOnClickListener {
             viewModel.checkInput(binding.numberInput.text.toString())
+            binding.gameGrid.smoothScrollToPosition(adapter.itemCount)
             binding.numberInput.text.clear()
         }
 

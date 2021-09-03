@@ -37,7 +37,7 @@ class GameAdapter() : RecyclerView.Adapter<GameAdapter.ViewHolder>() {
         override fun getNewListSize() = new.size
 
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) =
-            old[oldItemPosition].value == new[newItemPosition].value
+            old[oldItemPosition].ID == new[newItemPosition].ID
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int) =
             old[oldItemPosition] == new[newItemPosition]
