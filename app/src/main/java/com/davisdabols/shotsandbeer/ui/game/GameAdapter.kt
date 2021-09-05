@@ -8,7 +8,7 @@ import com.davisdabols.shotsandbeer.databinding.ItemGamePieceBinding
 import com.davisdabols.shotsandbeer.repository.models.GamePiece
 import kotlin.properties.Delegates
 
-class GameAdapter() : RecyclerView.Adapter<GameAdapter.ViewHolder>() {
+class GameAdapter : RecyclerView.Adapter<GameAdapter.ViewHolder>() {
     var guesses: List<GamePiece> by Delegates.observable(emptyList(), { _, old, new ->
         DiffUtil.calculateDiff(DifferenceUtil(old, new)).dispatchUpdatesTo(this)
     })

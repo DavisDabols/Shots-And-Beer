@@ -10,8 +10,6 @@ import com.davisdabols.shotsandbeer.repository.models.HighScoreModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.collect
-import timber.log.Timber
-import timber.log.Timber.d
 import java.util.*
 import javax.inject.Inject
 
@@ -38,9 +36,7 @@ class GameViewModel : ViewModel() {
     private val _onGameOver = MutableSharedFlow<String?>(replay = 1)
 
     val highScores: SharedFlow<List<HighScoreModel>> = _highScores
-    val gamePieces: SharedFlow<List<GamePiece>> = _gamePieces
     val guesses: SharedFlow<List<GamePiece>> = _guesses
-    val gameTimer: SharedFlow<String> = _gameTimer
     val onGameOver: SharedFlow<String?> = _onGameOver
 
     init {
@@ -59,6 +55,7 @@ class GameViewModel : ViewModel() {
         (0..POSSIBLE_NUMBERS).forEach { number ->
             pieces.add(GamePiece(number, number))
         }
+
         pieces.shuffle()
         pieces.shuffle()
 
@@ -67,7 +64,6 @@ class GameViewModel : ViewModel() {
         _gamePieces.tryEmit(pieces)
         timer.start()
         _guesses.tryEmit(emptyList())
-        Timber.d("${pieces}")
     }
 
     fun checkInput(inputValue: String) {
@@ -76,11 +72,11 @@ class GameViewModel : ViewModel() {
 
         var piecesFoundThisAttempt = 0
 
-        (0 until PIECE_COUNT).forEach { indexTwo ->
-            val inputDigit = inputValue[indexTwo].digitToInt()
+        (0 until PIECE_COUNT).forEach { index ->
+            val inputDigit = inputValue[index].digitToInt()
             guesses.add(GamePiece(guesses.lastOrNull()?.ID?.plus(1) ?: 0, inputDigit))
 
-            if(pieces[indexTwo].value == inputDigit) {
+            if(pieces[index].value == inputDigit) {
                 guesses.last().isFound = true
                 piecesFoundThisAttempt += 1
             } else if(pieces.any { it.value == inputDigit }) {
