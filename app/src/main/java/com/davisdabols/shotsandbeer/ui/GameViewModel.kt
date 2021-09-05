@@ -21,7 +21,7 @@ class GameViewModel : ViewModel() {
     private var timer = object : CountDownTimer(MAX_GAME_TIME, 10){
         override fun onTick(elapsedTime: Long) {
             val date = Date(MAX_GAME_TIME - elapsedTime)
-            _gameTimer.tryEmit(date.time.toTimeString())
+            gameTimer = date.time.toTimeString()
         }
 
         override fun onFinish() {
@@ -29,10 +29,11 @@ class GameViewModel : ViewModel() {
         }
     }
 
+    private var gameTimer: String = ""
+    private var gamePieces = mutableListOf<GamePiece>()
+
     private val _highScores = MutableSharedFlow<List<HighScoreModel>>(replay = 1)
-    private val _gamePieces = MutableSharedFlow<List<GamePiece>>(replay = 1)
     private val _guesses = MutableSharedFlow<List<GamePiece>>(replay = 1)
-    private val _gameTimer = MutableSharedFlow<String>(replay = 1)
     private val _onGameOver = MutableSharedFlow<String?>(replay = 1)
 
     val highScores: SharedFlow<List<HighScoreModel>> = _highScores
@@ -61,14 +62,14 @@ class GameViewModel : ViewModel() {
 
         pieces = pieces.drop(6).toMutableList()
 
-        _gamePieces.tryEmit(pieces)
+        gamePieces = pieces
         timer.start()
         _guesses.tryEmit(emptyList())
     }
 
     fun checkInput(inputValue: String) {
         val guesses = _guesses.replayCache[0].toMutableList()
-        val pieces = _gamePieces.replayCache[0].toMutableList()
+        val pieces = gamePieces
 
         var piecesFoundThisAttempt = 0
 
@@ -76,16 +77,16 @@ class GameViewModel : ViewModel() {
             val inputDigit = inputValue[index].digitToInt()
             guesses.add(GamePiece(guesses.lastOrNull()?.ID?.plus(1) ?: 0, inputDigit))
 
-            if(pieces[index].value == inputDigit) {
+            if (pieces[index].value == inputDigit) {
                 guesses.last().isFound = true
                 piecesFoundThisAttempt += 1
-            } else if(pieces.any { it.value == inputDigit }) {
+            } else if (pieces.any { it.value == inputDigit }) {
                 guesses.last().wrongLocation = true
             }
+        }
 
-            if(piecesFoundThisAttempt == 4) {
-                onGameOver()
-            }
+        if (piecesFoundThisAttempt == 4) {
+            onGameOver()
         }
 
         _guesses.tryEmit(guesses)
@@ -93,8 +94,8 @@ class GameViewModel : ViewModel() {
 
     private fun onGameOver() {
         timer.cancel()
-        val score = _gameTimer.replayCache[0]
-        _onGameOver.tryEmit(_gameTimer.replayCache[0])
+        val score = gameTimer
+        _onGameOver.tryEmit(gameTimer)
 
         launchIO {
             val id = _highScores.replayCache.lastOrNull()?.maxOfOrNull { it.id }?.plus(1) ?: 0

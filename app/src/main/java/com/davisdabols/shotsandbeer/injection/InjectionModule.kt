@@ -14,12 +14,12 @@ class InjectionModule(private val context: Context) {
 
     @Provides
     @Singleton
-    fun provideNoteDataBase() = Room
+    fun provideHighScoreDataBase() = Room
         .databaseBuilder(context, GameDatabase::class.java, HIGH_SCORE_DATABASE)
         .fallbackToDestructiveMigration()
         .build()
 
     @Provides
     @Singleton
-    fun provideNoteRepository(database: GameDatabase) = GameRepository(database.gameDao())
+    fun provideHighScoreRepository(database: GameDatabase) = GameRepository(database.gameDao())
 }
